@@ -2,6 +2,7 @@ import time
 import requests
 import re
 import hashlib
+import json
 
 nonce = "C7DC5CAD-31CF-4431-8635-B415B75BF4F3"
 device_token = "192E221C-120E-3120-B3B6-62CB913B9D66"
@@ -60,16 +61,30 @@ def download_chapter(chapters):
             content += '\n'
             print(f"{resp['data']['title']} 已下载")
         else:
-            print(f"{chapter} 下载失败，请检查session_APP和.SFCommunity是否错误或是未订阅该章节")
+            print(f"{chapter} 下载失败，请检查是否未订阅该章节")
     return content
-            
+
+def get_cookie(username, password):
+    timestamp = int(time.time() * 1000)
+    sign = md5_hex(f"{nonce}{timestamp}{device_token}{SALT}", 'Upper')
+    headers['sfsecurity'] = f'nonce={nonce}&timestamp={timestamp}&devicetoken={device_token}&sign={sign}'
+    data = json.dumps({"password":password, "shuMeiId":"","username":username})
+    url = "https://api.sfacg.com/sessions"
+    resp = requests.post(url, headers = headers,data = data)
+    if(resp.json()["status"]["httpCode"] == 200):
+        return json.dumps(requests.utils.dict_from_cookiejar(resp.cookies))
+    else:
+        return "请检查账号或密码是否错误"
 
 if __name__ == "__main__":
     novel = input("输入小说ID:")
-    session_APP = input("输入session_APP:")
-    SFCommunity = input("输入.SFCommunity:")
-    headers['cookie'] = f'session_APP={session_APP}; .SFCommunity={SFCommunity}'
-    title, chapter = get_catalog(novel)
-    content = title + '\n\n' +download_chapter(chapter)
-    with open(f'{title}.txt','w',encoding = "utf-8") as f:
-        f.write(content)
+    username = input("输入手机号:")
+    password = input("输入密码:")
+    headers['cookie'] = get_cookie(username, password)
+    if (headers['cookie'] == "请检查账号或密码是否错误"):
+        print("请检查账号或密码是否错误")
+    else:
+        title, chapter = get_catalog(novel)
+        content = title + '\n\n' +download_chapter(chapter)
+        with open(f'{title}.txt','w',encoding = "utf-8") as f:
+            f.write(content)
