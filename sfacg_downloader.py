@@ -72,7 +72,8 @@ def get_cookie(username, password):
     url = "https://api.sfacg.com/sessions"
     resp = requests.post(url, headers = headers,data = data)
     if(resp.json()["status"]["httpCode"] == 200):
-        return json.dumps(requests.utils.dict_from_cookiejar(resp.cookies))
+        cookie = requests.utils.dict_from_cookiejar(resp.cookies)
+        return f'.SFCommunity={cookie[".SFCommunity"]}; session_APP={cookie["session_APP"]}'
     else:
         return "请检查账号或密码是否错误"
 
@@ -81,6 +82,7 @@ if __name__ == "__main__":
     username = input("输入手机号:")
     password = input("输入密码:")
     headers['cookie'] = get_cookie(username, password)
+    print(headers['cookie'])
     if (headers['cookie'] == "请检查账号或密码是否错误"):
         print("请检查账号或密码是否错误")
     else:
