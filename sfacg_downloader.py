@@ -70,8 +70,8 @@ def download_chapter(chapters):
                 if char in dictionary:
                     content += dictionary[char]
                 else:
-                    if ('\u4e00' <= char <= '\u9fff'):
-                        warn = '该章节有错字未替换，请检查\n'
+                    # if ('\u4e00' <= char <= '\u9fff'):
+                    #     warn = '该章节有错字未替换，请检查\n'
                     content += char
             content += '\n' + warn
             print(f"{resp['data']['title']} 已下载")
