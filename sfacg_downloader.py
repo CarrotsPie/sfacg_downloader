@@ -107,5 +107,7 @@ if __name__ == "__main__":
     else:
         title, chapter = get_catalog(novel)
         content = title + '\n\n' + download_chapter(chapter)
+        title = title.replace('\\', ' ').replace('\/', ' ').replace(':', ' ').replace('*', ' ').replace(
+            '?', ' ').replace('\"', ' ').replace('<', ' ').replace('>', ' ').replace('|', ' ')
         with open(f'{title}.txt', 'w', encoding="utf-8") as f:
             f.write(content)
