@@ -7,8 +7,16 @@ import uuid
 
 with open('dict.json', 'r', encoding='utf-8') as file:
     dictionary = json.load(file)
-nonce = "C7DC5CAD-31CF-4431-8635-B415B75BF4F3"
-device_token = str(uuid.uuid4()).upper()
+nonce = str(uuid.uuid4()).upper()
+try:
+    with open('deviceToken.txt','r',encoding='utf-8') as file:
+        device_token = file.read()  
+except:
+    print("deviceToken可以在重装菠萝包APP并随机点开一部小说后的Android/data/com.sfacg/files/boluobao/log/com.sfacg.log.txt中找到,\n如果这个文件里有多个deviceToken，请使用时间更靠后的那一个")
+    device_token = input("输入deviceToken:")
+    device_token = device_token.upper()
+    with open('deviceToken.txt','w') as file:
+        file.write(device_token)
 SALT = "FN_Q29XHVmfV3mYX"
 headers = {
     'Host': 'api.sfacg.com',
@@ -70,8 +78,6 @@ def download_chapter(chapters):
                 if char in dictionary:
                     content += dictionary[char]
                 else:
-                    # if ('\u4e00' <= char <= '\u9fff'):
-                    #     warn = '该章节有错字未替换，请检查\n'
                     content += char
             content += '\n' + warn
             print(f"{resp['data']['title']} 已下载")
@@ -96,12 +102,10 @@ def get_cookie(username, password):
 
 
 if __name__ == "__main__":
-
     novel = input("输入小说ID:")
     username = input("输入手机号:")
     password = input("输入密码:")
     headers['cookie'] = get_cookie(username, password)
-    print(headers['cookie'])
     if (headers['cookie'] == "请检查账号或密码是否错误"):
         print("请检查账号或密码是否错误")
     else:
