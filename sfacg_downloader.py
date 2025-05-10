@@ -119,7 +119,7 @@ def get_cookie(username, password):
         cookie = requests.utils.dict_from_cookiejar(resp.cookies)
         return f'.SFCommunity={cookie[".SFCommunity"]}; session_APP={cookie["session_APP"]}'
     else:
-        return "1"#"请检查账号或密码是否错误"
+        return "请检查账号或密码是否错误"
 
 if __name__ == "__main__":
     novel = input("输入小说ID: ")
