@@ -15,9 +15,6 @@ if (True):
     for i in range(len(SPECIAL_CHARS)):
         charMap[SPECIAL_CHARS[i]] = REPLACEMENT_CHARS[i]
 
-# 初始化变量
-nonce = "AA22E3AB-3F4D-4DAE-AA75-E2D330594DBE"
-
 device_token = "910D166A-736E-3231-8B21-8D12DFD75F16"
 
 # 常量
@@ -98,6 +95,17 @@ def get_sign(nonce, timestamp, device_token):
 
     return sign
 
+
+# 初始化变量
+nonce = ""
+resp = {"status":{"httpCode":417}}
+while (resp['status']['httpCode']==417):
+    nonce = str(uuid.uuid4()).upper()
+    timestamp = int(time.time() * 1000)
+    sign = get_sign(nonce, timestamp, device_token)
+    headers['sfsecurity'] = f'nonce={nonce}&timestamp={timestamp}&devicetoken={device_token}&sign={sign}'
+    url = f"https://api.sfacg.com/Chaps/8436696?expand=content%2Cexpand.content"
+    resp = requests.get(url, headers=headers).json()
 
 
 def get_catalog(novel):
@@ -295,3 +303,4 @@ if __name__ == "__main__":
         f.write(content)
 
     print(f"已保存为 TXT 和 EPUB：{title_clean}.txt / {title_clean}.epub")
+
